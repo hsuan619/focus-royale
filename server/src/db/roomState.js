@@ -22,4 +22,8 @@ async function getPlayerCount(roomId) {
   return redis.scard(`room:${roomId}:players`)
 }
 
-module.exports = { setRoomState, getRoomState, addPlayer, removePlayer, getPlayerCount }
+async function deleteRoomState(roomId) {
+  await redis.del(`room:${roomId}:state`, `room:${roomId}:players`)
+}
+
+module.exports = { setRoomState, getRoomState, addPlayer, removePlayer, getPlayerCount, deleteRoomState }

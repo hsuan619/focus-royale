@@ -1,6 +1,6 @@
 const prisma = require('../db/prisma')
 const redis = require('../db/redis')
-const { getRoomState, addPlayer, removePlayer, getPlayerCount } = require('../db/roomState')
+const { getRoomState, addPlayer, removePlayer, getPlayerCount, deleteRoomState } = require('../db/roomState')
 const { startCountdown, cancelCountdown } = require('./countdown')
 const { eliminatePlayer } = require('../game/eliminate')
 
@@ -95,6 +95,12 @@ function registerRoomHandlers(io, socket, fastify) {
       await removePlayer(roomId, userId)
       const remaining = await getPlayerCount(roomId)
       io.to(roomId).emit('player_left', { userId, playerCount: remaining })
+
+      if (remaining === 0) {
+        await prisma.room.deleteMany({ where: { id: roomId } })
+        await deleteRoomState(roomId)
+        return
+      }
 
       if (state.status === 'COUNTDOWN' && remaining < 2) {
         await cancelCountdown(io, roomId)

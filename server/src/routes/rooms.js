@@ -1,5 +1,5 @@
 const prisma = require('../db/prisma')
-const { setRoomState, getRoomState } = require('../db/roomState')
+const { setRoomState, getRoomState, deleteRoomState } = require('../db/roomState')
 
 const alphaMap = { NORMAL: 0.5, ADVANCED: 1.0, TOURNAMENT: 1.5 }
 
@@ -34,6 +34,19 @@ async function roomsRoutes(fastify) {
     if (!room) return reply.code(404).send({ error: 'Room not found' })
     const state = await getRoomState(room.id)
     return reply.send({ ...room, liveState: state })
+  })
+
+  fastify.delete('/:id', { onRequest: [fastify.authenticate] }, async (request, reply) => {
+    const { id } = request.params
+    const room = await prisma.room.findUnique({ where: { id } })
+    if (!room) return reply.code(404).send({ error: 'Room not found' })
+    if (room.status !== 'WAITING' && room.status !== 'COUNTDOWN') {
+      return reply.code(400).send({ error: 'Cannot cancel an active room' })
+    }
+    await prisma.room.delete({ where: { id } })
+    await deleteRoomState(id)
+    fastify.io.to(id).emit('room_cancelled')
+    return reply.send({ ok: true })
   })
 
   fastify.get('/:id/results', async (request, reply) => {

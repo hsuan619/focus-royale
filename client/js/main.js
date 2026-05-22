@@ -60,6 +60,13 @@ function connectSocket(token) {
       showScreen('lobby')
     })
 
+    socket.on('room_cancelled', () => {
+      currentRoomId = null
+      clearCountdownUI()
+      showScreen('lobby')
+      initLobby(currentUser, joinRoom)
+    })
+
     socket.on('game_start', ({ startAt, playerCount }) => {
       clearCountdownUI()
       stopLobbyPoll()
@@ -101,6 +108,14 @@ function joinRoom(roomId) {
   showScreen('countdown')
   document.getElementById('countdown-number').textContent = '60'
   document.getElementById('countdown-players').textContent = '1 玩家加入'
+
+  document.getElementById('btn-cancel-room').onclick = async () => {
+    await fetch(`/rooms/${roomId}`, { method: 'DELETE', credentials: 'include' })
+    currentRoomId = null
+    clearCountdownUI()
+    showScreen('lobby')
+    initLobby(currentUser, joinRoom)
+  }
 }
 
 // ── Countdown UI ──
