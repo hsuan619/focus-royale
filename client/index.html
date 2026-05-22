@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>FOCUS ROYALE</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ══ LOGIN ══ -->
+  <div id="screen-login" class="screen hidden">
+    <div class="login-pixel-deco">░░░░░░░░░░░</div>
+    <h1 class="login-title glow-green cursor">FOCUS<br>ROYALE</h1>
+    <p class="login-pixel-deco">░░░░░░░░░░░</p>
+    <p class="login-sub">
+      將手機放上桌<br>
+      保持螢幕常亮<br>
+      最後存活者勝
+    </p>
+    <a href="/auth/google" class="google-btn">
+      <img src="/img/google-logo.svg" alt="G">
+      使用 GOOGLE 登入
+    </a>
+    <p class="login-sub" style="font-size:7px;color:#333">
+      ▸ 切換 APP 即遭淘汰<br>
+      ▸ 螢幕熄滅即遭淘汰
+    </p>
+  </div>
+
+  <!-- ══ LOBBY ══ -->
+  <div id="screen-lobby" class="screen hidden">
+    <div class="lobby-header">
+      <img id="user-avatar" class="pixel-avatar" src="" alt="">
+      <div class="lobby-user-info">
+        <p id="user-name" class="lobby-user-name">PLAYER</p>
+        <p id="user-coins" class="lobby-user-coins">🪙 ---</p>
+      </div>
+      <button id="btn-logout" class="lobby-logout">LOGOUT</button>
+    </div>
+
+    <div class="lobby-actions">
+      <div class="mode-selector">
+        <button class="mode-btn active" data-mode="NORMAL">普通</button>
+        <button class="mode-btn" data-mode="ADVANCED">進階<br><span style="color:var(--gold);font-size:6px">50幣</span></button>
+        <button class="mode-btn" data-mode="TOURNAMENT">錦標<br><span style="color:var(--red);font-size:6px">100幣</span></button>
+      </div>
+      <button id="btn-create-room" class="pixel-btn">▶ 建立新房間</button>
+    </div>
+
+    <p class="lobby-rooms-label">── 等待中的房間 ──</p>
+    <div id="room-list">
+      <div class="rooms-empty pixel-loader"><br><br>載入中 </div>
+    </div>
+  </div>
+
+  <!-- ══ COUNTDOWN ══ -->
+  <div id="screen-countdown" class="screen hidden">
+    <p class="countdown-label">WAITING FOR PLAYERS</p>
+    <p id="countdown-number" class="glow-green">60</p>
+    <p id="countdown-players" style="font-size:9px;color:var(--text)">1 / ? 玩家</p>
+    <div class="countdown-bar-wrap">
+      <div id="countdown-bar"></div>
+    </div>
+    <p style="font-size:7px;color:var(--gray);margin-top:8px">倒數結束自動開局</p>
+  </div>
+
+  <!-- ══ GAME ══ -->
+  <div id="screen-game" class="screen hidden">
+    <!-- Warning banner (hidden by default) -->
+    <div id="warning-banner" class="hidden">
+      ⚠ 偵測到中斷！請於 <span id="warning-secs">5</span> 秒內返回
+    </div>
+
+    <!-- Audio switcher -->
+    <div id="audio-switcher">
+      <button class="audio-btn" data-sound="mute" title="靜音">🔇</button>
+      <button class="audio-btn" data-sound="rain" title="雨聲">🌧</button>
+      <button class="audio-btn" data-sound="fire" title="營火">🔥</button>
+    </div>
+
+    <p class="game-label">FOCUS MODE</p>
+    <p id="game-timer" class="glow-green">00:00</p>
+    <div id="survivor-display">
+      <span id="survivor-count" class="glow-green">-</span>
+      <span class="survivor-label">存活中</span>
+    </div>
+
+    <!-- Feed -->
+    <div id="elimination-feed"></div>
+
+    <!-- Eliminated overlay (hidden) -->
+    <div id="elim-overlay" class="hidden">
+      <p class="elim-title">YOU WERE<br>ELIMINATED</p>
+      <p class="elim-sub">等待遊戲結束...</p>
+      <div id="elim-survival" style="font-size:9px;color:var(--text)"></div>
+    </div>
+  </div>
+
+  <!-- ══ RESULT ══ -->
+  <div id="screen-result" class="screen hidden">
+    <div class="result-header">
+      <p class="result-title glow-gold">GAME OVER</p>
+    </div>
+
+    <div class="result-self pixel-box" id="result-self">
+      <p class="result-self-rank">YOUR RANK</p>
+      <p class="result-self-score" id="result-self-score">0 PTS</p>
+      <p class="result-self-coins" id="result-self-coins"></p>
+    </div>
+
+    <div id="result-list"></div>
+
+    <div class="result-footer">
+      <button id="btn-back-lobby" class="pixel-btn">◀ 返回大廳</button>
+    </div>
+  </div>
+
+</div>
+<script type="module" src="/js/main.js"></script>
+</body>
+</html>

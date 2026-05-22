@@ -35,7 +35,7 @@ async function authRoutes(fastify) {
     await applyDailyBonus(user.id)
 
     const token = fastify.jwt.sign(
-      { userId: user.id, googleId, email, name, avatarUrl: picture },
+      { id: user.id, googleId, email, name, avatarUrl: picture },
       { expiresIn: '7d' }
     )
     reply
@@ -46,6 +46,11 @@ async function authRoutes(fastify) {
   // GET /auth/me — 取得目前登入用戶
   fastify.get('/me', { preHandler: fastify.authenticate }, async (request) => {
     return request.user
+  })
+
+  // GET /auth/token — 取得 JWT token 供 Socket.io 使用
+  fastify.get('/token', { preHandler: fastify.authenticate }, async (request, reply) => {
+    return { token: request.cookies.token }
   })
 
   // POST /auth/logout — 清除 session

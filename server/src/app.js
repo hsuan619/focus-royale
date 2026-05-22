@@ -1,4 +1,5 @@
 require('dotenv').config()
+const path = require('path')
 const fastify = require('fastify')({ logger: true })
 
 fastify.register(require('@fastify/cors'), {
@@ -15,6 +16,12 @@ fastify.register(require('@fastify/jwt'), {
 
 const { authenticate } = require('./middleware/authenticate')
 fastify.decorate('authenticate', authenticate)
+
+fastify.register(require('@fastify/static'), {
+  root: path.join(__dirname, '../../client'),
+  prefix: '/',
+  decorateReply: false,
+})
 
 fastify.register(require('./routes/auth'), { prefix: '/auth' })
 fastify.register(require('./routes/rooms'), { prefix: '/rooms' })
