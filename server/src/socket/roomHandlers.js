@@ -1,6 +1,6 @@
 const prisma = require('../db/prisma')
 const redis = require('../db/redis')
-const { getRoomState, addPlayer, removePlayer, getPlayerCount, deleteRoomState } = require('../db/roomState')
+const { getRoomState, addPlayer, removePlayer, getPlayerCount, getPlayerList, deleteRoomState } = require('../db/roomState')
 const { startCountdown, cancelCountdown } = require('./countdown')
 const { eliminatePlayer } = require('../game/eliminate')
 
@@ -35,9 +35,11 @@ function registerRoomHandlers(io, socket, fastify) {
       return
     }
 
+    const user = await prisma.user.findUnique({ where: { id: userId } })
+    if (!user) { socket.emit('error', { message: 'User not found' }); return }
+
     if (room.mode !== 'NORMAL' && room.stake > 0) {
-      const user = await prisma.user.findUnique({ where: { id: userId } })
-      if (!user || user.coins < room.stake) {
+      if (user.coins < room.stake) {
         socket.emit('error', { message: 'Insufficient coins' })
         return
       }
@@ -50,11 +52,14 @@ function registerRoomHandlers(io, socket, fastify) {
     socket.data.userId = userId
     socket.data.roomId = roomId
 
-    await addPlayer(roomId, userId)
+    await addPlayer(roomId, userId, user.name)
     socket.join(roomId)
 
-    const newCount = await getPlayerCount(roomId)
-    io.to(roomId).emit('player_joined', { userId, playerCount: newCount })
+    const [newCount, players] = await Promise.all([
+      getPlayerCount(roomId),
+      getPlayerList(roomId),
+    ])
+    io.to(roomId).emit('player_joined', { userId, playerName: user.name, playerCount: newCount, players })
 
     if (newCount >= 2) {
       await startCountdown(io, roomId)
@@ -93,8 +98,11 @@ function registerRoomHandlers(io, socket, fastify) {
 
     if (state.status === 'WAITING' || state.status === 'COUNTDOWN') {
       await removePlayer(roomId, userId)
-      const remaining = await getPlayerCount(roomId)
-      io.to(roomId).emit('player_left', { userId, playerCount: remaining })
+      const [remaining, players] = await Promise.all([
+        getPlayerCount(roomId),
+        getPlayerList(roomId),
+      ])
+      io.to(roomId).emit('player_left', { userId, playerCount: remaining, players })
 
       if (remaining === 0) {
         await prisma.room.deleteMany({ where: { id: roomId } })

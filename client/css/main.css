@@ -377,6 +377,19 @@ body::after {
   width: 100%;
   transition: width 1s linear;
 }
+#waiting-players {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+.waiting-player-tag {
+  font-size: 7px;
+  color: var(--green);
+  border: 1px solid var(--green-dim);
+  padding: 3px 6px;
+  background: rgba(0,230,118,0.05);
+}
 
 /* ══════════════════════════════════════
    SCREEN: GAME

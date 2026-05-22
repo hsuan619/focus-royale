@@ -1,5 +1,5 @@
 const prisma = require('../db/prisma')
-const { setRoomState, getRoomState, deleteRoomState } = require('../db/roomState')
+const { setRoomState, getRoomState, deleteRoomState, getPlayerCount } = require('../db/roomState')
 
 const alphaMap = { NORMAL: 0.5, ADVANCED: 1.0, TOURNAMENT: 1.5 }
 
@@ -29,7 +29,23 @@ async function roomsRoutes(fastify) {
       select: { id: true, mode: true, stake: true, maxPlayers: true, durationMins: true, creatorId: true, createdAt: true },
       orderBy: { createdAt: 'desc' },
     })
-    return reply.send(rooms)
+
+    // 過濾幽靈房間（沒有玩家的房間），同時清掉它們
+    const ghostIds = []
+    const liveRooms = (await Promise.all(
+      rooms.map(async (r) => {
+        const count = await getPlayerCount(r.id)
+        if (count === 0) { ghostIds.push(r.id); return null }
+        return r
+      })
+    )).filter(Boolean)
+
+    if (ghostIds.length > 0) {
+      await prisma.room.deleteMany({ where: { id: { in: ghostIds } } })
+      await Promise.all(ghostIds.map(deleteRoomState))
+    }
+
+    return reply.send(liveRooms)
   })
 
   fastify.get('/:id', async (request, reply) => {

@@ -41,14 +41,14 @@ function connectSocket(token) {
     /* global io */
     socket = io({ auth: { token }, reconnection: true, reconnectionDelay: 1000 })
 
-    socket.on('player_joined', ({ playerCount }) => {
-      const el = document.getElementById('countdown-players')
-      if (el) el.textContent = `${playerCount} 玩家加入`
+    socket.on('player_joined', ({ playerCount, players }) => {
+      document.getElementById('countdown-players').textContent = `${playerCount} / 10 玩家`
+      renderWaitingPlayers(players)
     })
 
-    socket.on('player_left', ({ playerCount }) => {
-      const el = document.getElementById('countdown-players')
-      if (el) el.textContent = `${playerCount} 玩家加入`
+    socket.on('player_left', ({ playerCount, players }) => {
+      document.getElementById('countdown-players').textContent = `${playerCount} / 10 玩家`
+      renderWaitingPlayers(players)
     })
 
     socket.on('countdown_start', ({ seconds }) => {
@@ -110,7 +110,8 @@ async function joinRoom(roomId) {
   socket.emit('join_room', { roomId, token: currentToken })
   showScreen('countdown')
   document.getElementById('countdown-number').textContent = '30'
-  document.getElementById('countdown-players').textContent = '1 玩家加入'
+  document.getElementById('countdown-players').textContent = '1 / 10 玩家'
+  renderWaitingPlayers([{ name: currentUser?.name || 'PLAYER' }])
 
   // 只有房主才顯示取消按鈕
   const cancelBtn = document.getElementById('btn-cancel-room')
@@ -130,6 +131,15 @@ async function joinRoom(roomId) {
       cancelBtn.style.display = 'none'
     }
   }
+}
+
+// ── Waiting player list ──
+function renderWaitingPlayers(players) {
+  const el = document.getElementById('waiting-players')
+  if (!el || !players) return
+  el.innerHTML = players.map(p =>
+    `<span class="waiting-player-tag">${(p.name || 'PLAYER').toUpperCase()}</span>`
+  ).join('')
 }
 
 // ── Countdown UI ──
