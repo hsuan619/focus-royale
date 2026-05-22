@@ -8,7 +8,7 @@ const durationTimers = new Map() // roomId → pomodoro end timeoutRef
 async function startCountdown(io, roomId) {
   if (countdowns.has(roomId)) return
 
-  await setRoomState(roomId, { status: 'COUNTDOWN' })
+  await setRoomState(roomId, { status: 'COUNTDOWN', countdownStartAt: Date.now().toString() })
   await prisma.room.update({ where: { id: roomId }, data: { status: 'COUNTDOWN' } })
   io.to(roomId).emit('countdown_start', { seconds: 30 })
 
@@ -42,10 +42,14 @@ async function startGame(io, roomId) {
     skipDuplicates: true,
   })
 
+  const nameMap = await redis.hgetall(`room:${roomId}:names`) || {}
+  const playerList = players.map(id => ({ userId: id, name: nameMap[id] || 'PLAYER' }))
+
   io.to(roomId).emit('game_start', {
     startAt: now.toISOString(),
     playerCount: players.length,
     durationMins: room.durationMins ?? null,
+    players: playerList,
   })
 
   if (room.durationMins) {

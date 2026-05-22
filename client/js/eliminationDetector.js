@@ -26,21 +26,31 @@ class EliminationDetector {
 
   _onVisibility() {
     if (document.visibilityState === 'hidden') {
-      clearTimeout(this.blurTimer)
-      this.blurTimer = null
-      this._eliminate()
+      if (this.blurTimer) return  // 已在緩衝倒數中，不重複啟動
+      this._startBuffer()
+    } else {
+      this._cancelBuffer()
     }
   }
 
   _onBlur() {
-    if (this.eliminated) return
+    if (this.eliminated || this.blurTimer) return
+    this._startBuffer()
+  }
+
+  _onFocus() {
+    this._cancelBuffer()
+  }
+
+  _startBuffer() {
     this.blurTimer = setTimeout(() => {
-      if (document.visibilityState === 'visible') this._eliminate()
+      this.blurTimer = null
+      this._eliminate()
     }, 30000)
     this.onWarning(30)
   }
 
-  _onFocus() {
+  _cancelBuffer() {
     if (this.blurTimer) {
       clearTimeout(this.blurTimer)
       this.blurTimer = null

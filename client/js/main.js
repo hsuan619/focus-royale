@@ -7,6 +7,7 @@ let socket = null
 let currentUser = null
 let currentToken = null
 let currentRoomId = null
+let gameActive = false
 
 // ── Boot ──
 async function boot() {
@@ -70,11 +71,19 @@ function connectSocket(token) {
       initLobby(currentUser, joinRoom)
     })
 
-    socket.on('game_start', ({ startAt, playerCount, durationMins }) => {
+    socket.on('game_start', ({ startAt, playerCount, durationMins, players }) => {
       clearCountdownUI()
       stopLobbyPoll()
+      gameActive = true
       showScreen('game')
       initGameScreen(socket, currentRoomId, startAt, playerCount, currentUser?.id, durationMins)
+      if (players) {
+        players.forEach(p => {
+          if (p.userId !== currentUser?.id) {
+            addEliminationFeed(`▶ ${p.name.toUpperCase()} 進入戰場`)
+          }
+        })
+      }
     })
 
     socket.on('player_reconnecting', ({ userId, seconds }) => {
@@ -91,12 +100,14 @@ function connectSocket(token) {
     })
 
     socket.on('game_ended', async ({ results }) => {
+      gameActive = false
       stopGame()
       showScreen('result')
       renderResults(results)
     })
 
     socket.on('error', ({ message }) => {
+      if (gameActive) return  // 遊戲中的 socket error 不跳回大廳
       currentRoomId = null
       clearCountdownUI()
       document.getElementById('waiting-players').innerHTML = ''

@@ -62,8 +62,9 @@ function registerRoomHandlers(io, socket, fastify) {
     io.to(roomId).emit('player_joined', { userId, playerName: user.name, playerCount: newCount, players })
 
     if (state.status === 'COUNTDOWN') {
-      // 已在倒數中，通知新加入的玩家同步倒數狀態
-      socket.emit('countdown_start', { seconds: 30 })
+      const elapsed = Math.floor((Date.now() - parseInt(state.countdownStartAt || 0)) / 1000)
+      const remaining = Math.max(1, 30 - elapsed)
+      socket.emit('countdown_start', { seconds: remaining })
     } else if (newCount >= 2) {
       await startCountdown(io, roomId)
     }
