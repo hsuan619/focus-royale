@@ -17,6 +17,7 @@ const { authenticate } = require('./middleware/authenticate')
 fastify.decorate('authenticate', authenticate)
 
 fastify.register(require('./routes/auth'), { prefix: '/auth' })
+fastify.register(require('./routes/rooms'), { prefix: '/rooms' })
 
 fastify.get('/health', async () => ({ status: 'ok' }))
 
