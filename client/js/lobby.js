@@ -10,7 +10,7 @@ export function initLobby(user, onJoinRoom) {
   if (user.avatarUrl) { avatar.src = user.avatarUrl; avatar.style.display = 'block' }
   else avatar.style.display = 'none'
   document.getElementById('user-name').textContent = user.name?.toUpperCase() || 'PLAYER'
-  document.getElementById('user-coins').textContent = `🪙 ${user.coins ?? '---'}`
+  document.getElementById('user-coins').textContent = `🪙 ${user.coins ?? '---'}  ⭐ ${user.totalScore ?? 0}`
 
   // Mode selector
   document.querySelectorAll('.mode-btn').forEach(btn => {

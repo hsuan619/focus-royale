@@ -37,7 +37,7 @@ async function endGame(io, roomId) {
 
   const finalSessions = await prisma.gameSession.findMany({
     where: { roomId },
-    include: { user: { select: { name: true, avatarUrl: true } } },
+    include: { user: { select: { name: true, avatarUrl: true, totalScore: true } } },
     orderBy: { scoreEarned: 'desc' },
   })
   io.to(roomId).emit('game_ended', { results: finalSessions })

@@ -43,9 +43,12 @@ async function authRoutes(fastify) {
       .redirect('/')
   })
 
-  // GET /auth/me — 取得目前登入用戶
+  // GET /auth/me — 取得目前登入用戶（從 DB 讀取最新資料）
   fastify.get('/me', { preHandler: fastify.authenticate }, async (request) => {
-    return request.user
+    const { getUserById } = require('../db/users')
+    const user = await getUserById(request.user.id)
+    if (!user) return request.server.httpErrors?.notFound() ?? { error: 'not found' }
+    return user
   })
 
   // GET /auth/token — 取得 JWT token 供 Socket.io 使用

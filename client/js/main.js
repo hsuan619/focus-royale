@@ -151,8 +151,10 @@ function renderResults(sessions) {
   const rank = selfSession ? sessions.indexOf(selfSession) + 1 : '-'
 
   if (selfSession) {
+    const earned = selfSession.scoreEarned ?? 0
+    const total = selfSession.user?.totalScore ?? 0
     document.getElementById('result-self-score').textContent =
-      `${selfSession.scoreEarned ?? 0} PTS`
+      `+${earned} PTS  (累積 ${total})`
     const cc = selfSession.coinsChange ?? 0
     const coinsEl = document.getElementById('result-self-coins')
     if (cc > 0) coinsEl.innerHTML = `<span class="coins-pos">+${cc} 🪙</span>`

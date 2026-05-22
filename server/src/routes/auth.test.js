@@ -1,10 +1,21 @@
 const app = require('../app')
+const prisma = require('../db/prisma')
+
+let testUser
 
 beforeAll(async () => {
   await app.ready()
+  testUser = await prisma.user.create({
+    data: {
+      googleId: `auth-test-${Date.now()}`,
+      email: `authtest${Date.now()}@example.com`,
+      name: 'Test User',
+    },
+  })
 })
 
 afterAll(async () => {
+  await prisma.user.delete({ where: { id: testUser.id } }).catch(() => {})
   await app.close()
 })
 
@@ -16,10 +27,7 @@ describe('GET /auth/me', () => {
   })
 
   it('有效 token 時回傳 user payload', async () => {
-    const token = app.jwt.sign(
-      { googleId: 'g123', email: 'test@example.com', name: 'Test User' },
-      { expiresIn: '1h' }
-    )
+    const token = app.jwt.sign({ id: testUser.id }, { expiresIn: '1h' })
     const res = await app.inject({
       method: 'GET',
       url: '/auth/me',
@@ -27,7 +35,7 @@ describe('GET /auth/me', () => {
     })
     expect(res.statusCode).toBe(200)
     const body = res.json()
-    expect(body.email).toBe('test@example.com')
+    expect(body.email).toBe(testUser.email)
     expect(body.name).toBe('Test User')
   })
 })
