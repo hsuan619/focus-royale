@@ -18,7 +18,7 @@ function registerRoomHandlers(io, socket, fastify) {
     }
 
     const state = await getRoomState(roomId)
-    if (!state || state.status !== 'WAITING') {
+    if (!state || (state.status !== 'WAITING' && state.status !== 'COUNTDOWN')) {
       socket.emit('error', { message: 'Room not available' })
       return
     }
@@ -61,7 +61,10 @@ function registerRoomHandlers(io, socket, fastify) {
     ])
     io.to(roomId).emit('player_joined', { userId, playerName: user.name, playerCount: newCount, players })
 
-    if (newCount >= 2) {
+    if (state.status === 'COUNTDOWN') {
+      // 已在倒數中，通知新加入的玩家同步倒數狀態
+      socket.emit('countdown_start', { seconds: 30 })
+    } else if (newCount >= 2) {
       await startCountdown(io, roomId)
     }
   })

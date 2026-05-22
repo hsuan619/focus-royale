@@ -123,6 +123,7 @@ async function loadRooms(onJoinRoom, currentUserId) {
           <span class="room-card-mode">${modeLabel(r.mode)}</span>
           ${r.stake > 0 ? `<span class="room-card-stake">🪙 ${r.stake}</span>` : ''}
           <span class="room-card-dur">${r.durationMins ? `⏱ ${r.durationMins}分` : '∞'}</span>
+          ${r.status === 'COUNTDOWN' ? `<span style="color:var(--gold);font-size:6px">▶ 倒數中</span>` : ''}
         </div>
         <span class="room-card-id">${r.id.slice(0, 12)}...</span>
       </div>

@@ -25,8 +25,8 @@ async function roomsRoutes(fastify) {
 
   fastify.get('/', async (request, reply) => {
     const rooms = await prisma.room.findMany({
-      where: { status: 'WAITING' },
-      select: { id: true, mode: true, stake: true, maxPlayers: true, durationMins: true, creatorId: true, createdAt: true },
+      where: { status: { in: ['WAITING', 'COUNTDOWN'] } },
+      select: { id: true, mode: true, stake: true, maxPlayers: true, durationMins: true, creatorId: true, status: true, createdAt: true },
       orderBy: { createdAt: 'desc' },
     })
 

@@ -96,6 +96,15 @@ function connectSocket(token) {
       renderResults(results)
     })
 
+    socket.on('error', ({ message }) => {
+      currentRoomId = null
+      clearCountdownUI()
+      document.getElementById('waiting-players').innerHTML = ''
+      showScreen('lobby')
+      initLobby(currentUser, joinRoom)
+      alert(`❌ ${message}`)
+    })
+
     socket.on('reconnect', () => {
       if (currentRoomId) socket.emit('reconnect_room', { roomId: currentRoomId, token: currentToken })
     })
