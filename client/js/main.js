@@ -8,6 +8,7 @@ let currentUser = null
 let currentToken = null
 let currentRoomId = null
 let gameActive = false
+let joinedAt = 0
 
 // ── Boot ──
 async function boot() {
@@ -43,7 +44,11 @@ function connectSocket(token) {
     socket = io({ auth: { token }, reconnection: true, reconnectionDelay: 1000 })
 
     socket.on('player_joined', ({ playerCount }) => {
-      document.getElementById('countdown-players').textContent = `${playerCount} / 10 玩家`
+      const elapsed = Date.now() - joinedAt
+      const delay = Math.max(0, 800 - elapsed)
+      setTimeout(() => {
+        document.getElementById('countdown-players').textContent = `${playerCount} / 10 玩家`
+      }, delay)
     })
 
     socket.on('player_left', ({ playerCount }) => {
@@ -142,6 +147,7 @@ function connectSocket(token) {
 async function joinRoom(roomId) {
   if (!socket) return
   currentRoomId = roomId
+  joinedAt = Date.now()
   socket.emit('join_room', { roomId, token: currentToken })
   showScreen('countdown')
   document.getElementById('countdown-number').textContent = '30'

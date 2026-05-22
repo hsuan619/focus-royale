@@ -20,7 +20,7 @@ html, body {
   background: var(--black);
   color: var(--white);
   font-family: 'Press Start 2P', monospace;
-  font-size: 10px;
+  font-size: 15px;
   line-height: 1.8;
   -webkit-font-smoothing: none;
   image-rendering: pixelated;
@@ -81,7 +81,7 @@ body::after {
   color: var(--black);
   border: none;
   font-family: 'Press Start 2P', monospace;
-  font-size: 10px;
+  font-size: 15px;
   text-align: center;
   cursor: pointer;
   clip-path: polygon(
@@ -112,7 +112,7 @@ body::after {
   color: var(--green);
   border: var(--pixel) solid var(--green);
   font-family: 'Press Start 2P', monospace;
-  font-size: 9px;
+  font-size: 14px;
   text-align: left;
   cursor: pointer;
   transition: background 0.1s;
@@ -159,14 +159,14 @@ body::after {
 }
 
 .login-title {
-  font-size: 22px;
+  font-size: 33px;
   color: var(--green);
   line-height: 1.5;
   letter-spacing: -1px;
 }
 
 .login-sub {
-  font-size: 8px;
+  font-size: 12px;
   color: var(--text);
   line-height: 2;
   max-width: 260px;
@@ -181,7 +181,7 @@ body::after {
   text-decoration: none;
   padding: 14px 20px;
   font-family: 'Press Start 2P', monospace;
-  font-size: 9px;
+  font-size: 14px;
   clip-path: polygon(
     0 4px, 4px 4px, 4px 0,
     calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
@@ -195,7 +195,7 @@ body::after {
 .google-btn img { width: 20px; height: 20px; }
 
 .login-pixel-deco {
-  font-size: 28px;
+  font-size: 42px;
   color: var(--green-dim);
   letter-spacing: 4px;
   line-height: 1;
@@ -218,14 +218,14 @@ body::after {
 
 .lobby-user-info { flex: 1; min-width: 0; }
 .lobby-user-name {
-  font-size: 9px;
+  font-size: 14px;
   color: var(--white);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .lobby-user-coins {
-  font-size: 9px;
+  font-size: 14px;
   color: var(--gold);
   margin-top: 4px;
 }
@@ -235,7 +235,7 @@ body::after {
   border: 2px solid var(--gray);
   color: var(--text);
   font-family: 'Press Start 2P', monospace;
-  font-size: 7px;
+  font-size: 11px;
   padding: 6px 8px;
   cursor: pointer;
 }
@@ -249,7 +249,7 @@ body::after {
 
 .lobby-rooms-label {
   padding: 0 16px 8px;
-  font-size: 8px;
+  font-size: 12px;
   color: var(--text);
   letter-spacing: 2px;
 }
@@ -281,21 +281,21 @@ body::after {
   margin-bottom: 6px;
 }
 .room-card-mode {
-  font-size: 9px;
+  font-size: 14px;
   color: var(--green);
 }
 .room-card-stake {
-  font-size: 8px;
+  font-size: 12px;
   color: var(--gold);
 }
 .room-card-id {
-  font-size: 7px;
+  font-size: 11px;
   color: var(--gray);
 }
 
 .rooms-empty {
   text-align: center;
-  font-size: 8px;
+  font-size: 12px;
   color: var(--gray);
   padding: 32px 0;
   line-height: 2.5;
@@ -314,7 +314,7 @@ body::after {
   color: var(--text);
   border: 2px solid var(--gray);
   font-family: 'Press Start 2P', monospace;
-  font-size: 7px;
+  font-size: 11px;
   cursor: pointer;
   transition: all 0.1s;
 }
@@ -326,7 +326,7 @@ body::after {
   color: var(--text);
   border: 2px solid var(--gray);
   font-family: 'Press Start 2P', monospace;
-  font-size: 7px;
+  font-size: 11px;
   text-align: center;
   cursor: pointer;
   transition: all 0.1s;
@@ -348,21 +348,21 @@ body::after {
 }
 
 .countdown-label {
-  font-size: 10px;
+  font-size: 15px;
   color: var(--text);
   letter-spacing: 3px;
   animation: blink 2s step-end infinite;
 }
 
 #countdown-number {
-  font-size: 96px;
+  font-size: 144px;
   color: var(--green);
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
 
 #countdown-players {
-  font-size: 12px;
+  font-size: 18px;
   color: var(--text);
 }
 
@@ -384,7 +384,7 @@ body::after {
   justify-content: center;
 }
 .waiting-player-tag {
-  font-size: 9px;
+  font-size: 14px;
   color: var(--green);
   border: 1px solid var(--green-dim);
   padding: 4px 8px;
@@ -406,7 +406,7 @@ body::after {
   top: 0; left: 0; right: 0;
   background: var(--red);
   color: var(--black);
-  font-size: 12px;
+  font-size: 18px;
   text-align: center;
   padding: 14px;
   z-index: 500;
@@ -419,14 +419,14 @@ body::after {
 #warning-banner.active { animation: warningPulse 0.5s step-end infinite; }
 
 .game-label {
-  font-size: 10px;
+  font-size: 15px;
   color: var(--gray);
   letter-spacing: 4px;
   text-transform: uppercase;
 }
 
 #game-timer {
-  font-size: 80px;
+  font-size: 120px;
   color: var(--white);
   font-variant-numeric: tabular-nums;
   line-height: 1;
@@ -436,7 +436,7 @@ body::after {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 20px;
 }
 #survivor-count { color: var(--green); }
 .survivor-label { color: var(--text); }
@@ -453,7 +453,7 @@ body::after {
   background: var(--black);
   border: 2px solid var(--gray);
   color: var(--text);
-  font-size: 14px;
+  font-size: 21px;
   width: 32px; height: 32px;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
@@ -471,7 +471,7 @@ body::after {
   max-width: 360px;
 }
 .game-player-tag {
-  font-size: 9px;
+  font-size: 14px;
   padding: 4px 8px;
   border: 1px solid var(--green-dim);
   color: var(--green);
@@ -500,7 +500,7 @@ body::after {
   pointer-events: none;
 }
 .feed-item {
-  font-size: 9px;
+  font-size: 14px;
   color: var(--red);
   animation: feedFade 3s ease forwards;
 }
@@ -523,13 +523,13 @@ body::after {
   z-index: 800;
 }
 .elim-title {
-  font-size: 24px;
+  font-size: 36px;
   color: var(--red);
   text-align: center;
   line-height: 1.6;
   animation: blink 1.5s step-end infinite;
 }
-.elim-sub { font-size: 11px; color: var(--text); }
+.elim-sub { font-size: 17px; color: var(--text); }
 
 /* ══════════════════════════════════════
    SCREEN: RESULT
@@ -544,7 +544,7 @@ body::after {
   border-bottom: var(--pixel) solid var(--gray);
 }
 .result-title {
-  font-size: 18px;
+  font-size: 27px;
   color: var(--gold);
 }
 
@@ -555,13 +555,13 @@ body::after {
   border: var(--pixel) solid var(--green);
 }
 .result-self-rank {
-  font-size: 11px;
+  font-size: 17px;
   color: var(--text);
   margin-bottom: 6px;
 }
-.result-self-score { font-size: 24px; color: var(--green); }
+.result-self-score { font-size: 36px; color: var(--green); }
 .result-self-coins {
-  font-size: 11px;
+  font-size: 17px;
   margin-top: 4px;
 }
 .coins-pos { color: var(--gold); }
@@ -586,15 +586,15 @@ body::after {
   gap: 8px;
   padding: 10px 8px;
   border: 2px solid var(--gray);
-  font-size: 10px;
+  font-size: 15px;
 }
 .result-row:first-child { border-color: var(--gold); }
 .result-row.eliminated { opacity: 0.5; }
 .result-rank { color: var(--text); text-align: center; }
 .result-name { color: var(--white); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.result-time { color: var(--text); font-size: 9px; }
+.result-time { color: var(--text); font-size: 14px; }
 .result-score { color: var(--green); }
-.result-status { font-size: 9px; }
+.result-status { font-size: 14px; }
 
 .result-footer {
   padding: 12px 16px;
@@ -612,6 +612,6 @@ body::after {
 .pixel-loader::after {
   content: '▓░░░░';
   color: var(--green);
-  font-size: 12px;
+  font-size: 18px;
   animation: pixelLoad 1s step-end infinite;
 }

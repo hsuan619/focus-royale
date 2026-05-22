@@ -27,7 +27,7 @@
       <img src="/img/google-logo.svg" alt="G">
       使用 GOOGLE 登入
     </a>
-    <p class="login-sub" style="font-size:7px;color:#333">
+    <p class="login-sub" style="font-size:11px;color:#333">
       ▸ 切換 APP 即遭淘汰<br>
       ▸ 螢幕熄滅即遭淘汰
     </p>
@@ -40,12 +40,12 @@
       <div class="lobby-user-info">
         <div style="display:flex;align-items:center;gap:6px">
           <p id="user-name" class="lobby-user-name">PLAYER</p>
-          <button id="btn-edit-name" style="font-size:7px;background:none;border:1px solid var(--gray);color:var(--gray);padding:2px 5px;font-family:'Press Start 2P',monospace;cursor:pointer">✎</button>
+          <button id="btn-edit-name" style="font-size:11px;background:none;border:1px solid var(--gray);color:var(--gray);padding:2px 5px;font-family:'Press Start 2P',monospace;cursor:pointer">✎</button>
         </div>
         <div id="edit-name-form" style="display:none;gap:4px;align-items:center">
-          <input id="name-input" maxlength="20" style="font-size:8px;background:#111;color:var(--green);border:1px solid var(--green);padding:3px 5px;font-family:'Press Start 2P',monospace;width:120px">
-          <button id="btn-save-name" style="font-size:7px;background:none;border:1px solid var(--green);color:var(--green);padding:3px 6px;font-family:'Press Start 2P',monospace;cursor:pointer">OK</button>
-          <button id="btn-cancel-name" style="font-size:7px;background:none;border:1px solid var(--gray);color:var(--gray);padding:3px 6px;font-family:'Press Start 2P',monospace;cursor:pointer">✕</button>
+          <input id="name-input" maxlength="20" style="font-size:12px;background:#111;color:var(--green);border:1px solid var(--green);padding:3px 5px;font-family:'Press Start 2P',monospace;width:120px">
+          <button id="btn-save-name" style="font-size:11px;background:none;border:1px solid var(--green);color:var(--green);padding:3px 6px;font-family:'Press Start 2P',monospace;cursor:pointer">OK</button>
+          <button id="btn-cancel-name" style="font-size:11px;background:none;border:1px solid var(--gray);color:var(--gray);padding:3px 6px;font-family:'Press Start 2P',monospace;cursor:pointer">✕</button>
         </div>
         <p id="user-coins" class="lobby-user-coins">🪙 ---</p>
       </div>
@@ -55,15 +55,15 @@
     <div class="lobby-actions">
       <div class="mode-selector">
         <button class="mode-btn active" data-mode="NORMAL">普通</button>
-        <button class="mode-btn" data-mode="ADVANCED">進階<br><span style="color:var(--gold);font-size:6px">50幣</span></button>
-        <button class="mode-btn" data-mode="TOURNAMENT">錦標<br><span style="color:var(--red);font-size:6px">100幣</span></button>
+        <button class="mode-btn" data-mode="ADVANCED">進階<br><span style="color:var(--gold);font-size:9px">50幣</span></button>
+        <button class="mode-btn" data-mode="TOURNAMENT">錦標<br><span style="color:var(--red);font-size:9px">100幣</span></button>
       </div>
       <div class="duration-selector">
         <button class="dur-btn active" data-dur="unlimited">無限制</button>
         <button class="dur-btn" data-dur="pomodoro">番茄鐘</button>
         <input id="pomodoro-mins" type="number" min="1" max="180" value="25"
-               style="display:none;width:48px;font-size:9px;background:#111;color:var(--green);border:1px solid var(--green);text-align:center;padding:2px">
-        <span id="pomodoro-label" style="display:none;font-size:7px;color:var(--gray)">分鐘</span>
+               style="display:none;width:48px;font-size:14px;background:#111;color:var(--green);border:1px solid var(--green);text-align:center;padding:2px">
+        <span id="pomodoro-label" style="display:none;font-size:11px;color:var(--gray)">分鐘</span>
       </div>
       <button id="btn-create-room" class="pixel-btn">▶ 建立新房間</button>
     </div>
@@ -78,13 +78,13 @@
   <div id="screen-countdown" class="screen hidden">
     <p class="countdown-label">WAITING FOR PLAYERS</p>
     <p id="countdown-number" class="glow-green">30</p>
-    <p id="countdown-players" style="font-size:9px;color:var(--text)">1 / ? 玩家</p>
+    <p id="countdown-players" style="font-size:18px;color:var(--text)">1 / ? 玩家</p>
     <div class="countdown-bar-wrap">
       <div id="countdown-bar"></div>
     </div>
-    <p style="font-size:7px;color:var(--gray);margin-top:8px">倒數結束自動開局</p>
+    <p style="font-size:11px;color:var(--gray);margin-top:8px">倒數結束自動開局</p>
     <div id="waiting-players" style="margin-top:16px;width:100%;padding:0 16px"></div>
-    <button id="btn-cancel-room" class="pixel-btn-outline" style="margin-top:12px;font-size:8px;color:var(--red)">✕ 取消開房</button>
+    <button id="btn-cancel-room" class="pixel-btn-outline" style="margin-top:12px;font-size:12px;color:var(--red)">✕ 取消開房</button>
   </div>
 
   <!-- ══ GAME ══ -->
@@ -118,7 +118,7 @@
     <div id="elim-overlay" class="hidden">
       <p class="elim-title">YOU WERE<br>ELIMINATED</p>
       <p class="elim-sub" id="elim-countdown">3 秒後返回大廳...</p>
-      <div id="elim-survival" style="font-size:9px;color:var(--text)"></div>
+      <div id="elim-survival" style="font-size:14px;color:var(--text)"></div>
     </div>
   </div>
 
