@@ -6,6 +6,7 @@ import { elimMessage, encourageMessage } from './messages.js'
 
 let timerInterval = null
 let encourageInterval = null
+let warningTick = null
 let startTime = null
 let detector = null
 let currentRoomId = null
@@ -60,19 +61,20 @@ export function initGameScreen(socket, roomId, startAt, playerCount, userId, dur
       showEliminatedOverlay()
     },
     onWarning: (secs) => {
+      if (warningTick) { clearInterval(warningTick); warningTick = null }
       const banner = document.getElementById('warning-banner')
       banner.classList.remove('hidden')
       banner.classList.add('active')
-      document.getElementById('warning-secs').textContent = secs
       let remaining = secs
-      this._warningTick = setInterval(() => {
+      document.getElementById('warning-secs').textContent = remaining
+      warningTick = setInterval(() => {
         remaining--
         document.getElementById('warning-secs').textContent = remaining
-        if (remaining <= 0) clearInterval(this._warningTick)
+        if (remaining <= 0) { clearInterval(warningTick); warningTick = null }
       }, 1000)
     },
     onWarningCancelled: () => {
-      clearInterval(this._warningTick)
+      if (warningTick) { clearInterval(warningTick); warningTick = null }
       const banner = document.getElementById('warning-banner')
       banner.classList.add('hidden')
       banner.classList.remove('active')
@@ -97,6 +99,7 @@ export function addEliminationFeed(msg, duration = 3200) {
 export function stopGame() {
   clearInterval(timerInterval)
   clearInterval(encourageInterval)
+  if (warningTick) { clearInterval(warningTick); warningTick = null }
   if (detector) { detector.stop(); detector = null }
   releaseWakeLock()
   stopAmbient()
