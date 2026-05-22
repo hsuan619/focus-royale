@@ -1,6 +1,6 @@
 import { showScreen } from './screens.js'
 import { initLobby, stopLobbyPoll } from './lobby.js'
-import { initGameScreen, updateSurvivorCount, addEliminationFeed, stopGame } from './game.js'
+import { initGameScreen, updateSurvivorCount, addEliminationFeed, stopGame, showEliminatedOverlay } from './game.js'
 import { elimMessage } from './messages.js'
 
 let socket = null
@@ -97,6 +97,26 @@ function connectSocket(token) {
     socket.on('player_eliminated', ({ survivorCount, totalCount, userId, playerName }) => {
       updateSurvivorCount(survivorCount)
       addEliminationFeed(elimMessage(playerName) + `  [${survivorCount}/${totalCount}]`)
+
+      if (userId === currentUser?.id) {
+        showEliminatedOverlay()
+        let secs = 3
+        const cd = document.getElementById('elim-countdown')
+        const tick = setInterval(() => {
+          secs--
+          if (cd) cd.textContent = `${secs} 秒後返回大廳...`
+          if (secs <= 0) clearInterval(tick)
+        }, 1000)
+        setTimeout(async () => {
+          gameActive = false
+          stopGame()
+          currentRoomId = null
+          const res = await fetch('/auth/me', { credentials: 'include' })
+          if (res.ok) currentUser = await res.json()
+          showScreen('lobby')
+          initLobby(currentUser, joinRoom)
+        }, 3000)
+      }
     })
 
     socket.on('game_ended', async ({ results }) => {

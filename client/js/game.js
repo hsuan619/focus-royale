@@ -125,11 +125,10 @@ function sendElimination(roomId) {
   }
 }
 
-function showEliminatedOverlay() {
+export function showEliminatedOverlay() {
   const elapsed = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0
   const m = Math.floor(elapsed / 60)
   const s = elapsed % 60
-  document.getElementById('elim-survival').textContent =
-    `存活時間：${m}分${s}秒`
+  document.getElementById('elim-survival').textContent = `存活時間：${m}分${s}秒`
   document.getElementById('elim-overlay').classList.remove('hidden')
 }
