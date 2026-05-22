@@ -426,7 +426,7 @@ body::after {
 }
 
 #game-timer {
-  font-size: 120px;
+  font-size: min(96px, 20vw);
   color: var(--white);
   font-variant-numeric: tabular-nums;
   line-height: 1;

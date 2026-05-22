@@ -19,14 +19,14 @@ async function endGame(io, roomId) {
 
   for (const session of sessions) {
     const eliminatedBefore = sessions.filter(
-      (s) => s.eliminatedAt && s.eliminatedAt <= (session.eliminatedAt ?? now)
+      (s) => s.eliminatedAt && s.eliminatedAt < (session.eliminatedAt ?? now)
     ).length
-    const survivalSecs = session.survivalSecs || Math.floor((now - new Date(session.joinedAt)) / 1000)
+    const survivalSecs = session.survivalSecs ?? Math.floor((now - new Date(session.joinedAt)) / 1000)
     const score = calcScore({ survivalSecs, nEliminated: eliminatedBefore, nTotal, alpha: room.alpha })
 
     await prisma.gameSession.update({
       where: { id: session.id },
-      data: { scoreEarned: score },
+      data: { scoreEarned: score, survivalSecs },
     })
     await prisma.user.update({
       where: { id: session.userId },
