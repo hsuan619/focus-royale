@@ -1,6 +1,6 @@
 import { showScreen } from './screens.js'
 import { initLobby, stopLobbyPoll } from './lobby.js'
-import { initGameScreen, updateSurvivorCount, addEliminationFeed, stopGame, showEliminatedOverlay } from './game.js'
+import { initGameScreen, updateSurvivorCount, addEliminationFeed, stopGame, showEliminatedOverlay, initPlayerList, markPlayerEliminated } from './game.js'
 import { elimMessage } from './messages.js'
 
 let socket = null
@@ -42,14 +42,12 @@ function connectSocket(token) {
     /* global io */
     socket = io({ auth: { token }, reconnection: true, reconnectionDelay: 1000 })
 
-    socket.on('player_joined', ({ playerCount, players }) => {
+    socket.on('player_joined', ({ playerCount }) => {
       document.getElementById('countdown-players').textContent = `${playerCount} / 10 玩家`
-      renderWaitingPlayers(players)
     })
 
-    socket.on('player_left', ({ playerCount, players }) => {
+    socket.on('player_left', ({ playerCount }) => {
       document.getElementById('countdown-players').textContent = `${playerCount} / 10 玩家`
-      renderWaitingPlayers(players)
     })
 
     socket.on('countdown_start', ({ seconds }) => {
@@ -78,11 +76,7 @@ function connectSocket(token) {
       showScreen('game')
       initGameScreen(socket, currentRoomId, startAt, playerCount, currentUser?.id, durationMins)
       if (players) {
-        players.forEach(p => {
-          if (p.userId !== currentUser?.id) {
-            addEliminationFeed(`▶ ${p.name.toUpperCase()} 進入戰場`)
-          }
-        })
+        initPlayerList(players, currentUser?.id)
       }
     })
 
@@ -96,6 +90,7 @@ function connectSocket(token) {
 
     socket.on('player_eliminated', ({ survivorCount, totalCount, userId, playerName }) => {
       updateSurvivorCount(survivorCount)
+      markPlayerEliminated(userId)
       addEliminationFeed(elimMessage(playerName) + `  [${survivorCount}/${totalCount}]`)
 
       if (userId === currentUser?.id) {
@@ -151,7 +146,6 @@ async function joinRoom(roomId) {
   showScreen('countdown')
   document.getElementById('countdown-number').textContent = '30'
   document.getElementById('countdown-players').textContent = '1 / 10 玩家'
-  renderWaitingPlayers([{ name: currentUser?.name || 'PLAYER' }])
 
   // 只有房主才顯示取消按鈕
   const cancelBtn = document.getElementById('btn-cancel-room')
@@ -171,15 +165,6 @@ async function joinRoom(roomId) {
       cancelBtn.style.display = 'none'
     }
   }
-}
-
-// ── Waiting player list ──
-function renderWaitingPlayers(players) {
-  const el = document.getElementById('waiting-players')
-  if (!el || !players) return
-  el.innerHTML = players.map(p =>
-    `<span class="waiting-player-tag">${(p.name || 'PLAYER').toUpperCase()}</span>`
-  ).join('')
 }
 
 // ── Countdown UI ──
@@ -231,12 +216,15 @@ function renderResults(sessions) {
   list.innerHTML = sessions.map((s, i) => {
     const mins = Math.floor((s.survivalSecs || 0) / 60)
     const secs = (s.survivalSecs || 0) % 60
+    const isElim = !!s.eliminatedAt
+    const status = isElim ? '💀' : '👑'
     return `
-      <div class="result-row ${s.userId === selfId ? 'pixel-box' : ''}">
+      <div class="result-row ${s.userId === selfId ? 'pixel-box' : ''} ${isElim ? 'eliminated' : ''}">
         <span class="result-rank">${i + 1}</span>
         <span class="result-name">${(s.user?.name || 'PLAYER').toUpperCase()}</span>
         <span class="result-time">${mins}:${String(secs).padStart(2,'0')}</span>
         <span class="result-score">${s.scoreEarned ?? 0}</span>
+        <span class="result-status">${status}</span>
       </div>`
   }).join('')
 

@@ -87,6 +87,19 @@ export function updateSurvivorCount(count) {
   document.getElementById('survivor-count').textContent = count
 }
 
+export function initPlayerList(players, selfId) {
+  const el = document.getElementById('game-players')
+  if (!el || !players) return
+  el.innerHTML = players.map(p =>
+    `<span class="game-player-tag${p.userId === selfId ? ' self' : ''}" data-uid="${p.userId}">${(p.name || 'PLAYER').toUpperCase()}</span>`
+  ).join('')
+}
+
+export function markPlayerEliminated(userId) {
+  const el = document.querySelector(`#game-players [data-uid="${userId}"]`)
+  if (el) el.classList.add('eliminated')
+}
+
 export function addEliminationFeed(msg, duration = 3200) {
   const feed = document.getElementById('elimination-feed')
   const item = document.createElement('div')
