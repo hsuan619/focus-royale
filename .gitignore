@@ -3,6 +3,5 @@ node_modules/
 *.log
 .claude/
 *.md
-client/audio/
 *.png
 .playwright-mcp/
