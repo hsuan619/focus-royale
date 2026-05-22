@@ -50,6 +50,13 @@
         <button class="mode-btn" data-mode="ADVANCED">進階<br><span style="color:var(--gold);font-size:6px">50幣</span></button>
         <button class="mode-btn" data-mode="TOURNAMENT">錦標<br><span style="color:var(--red);font-size:6px">100幣</span></button>
       </div>
+      <div class="duration-selector">
+        <button class="dur-btn active" data-dur="unlimited">無限制</button>
+        <button class="dur-btn" data-dur="pomodoro">番茄鐘</button>
+        <input id="pomodoro-mins" type="number" min="1" max="180" value="25"
+               style="display:none;width:48px;font-size:9px;background:#111;color:var(--green);border:1px solid var(--green);text-align:center;padding:2px">
+        <span id="pomodoro-label" style="display:none;font-size:7px;color:var(--gray)">分鐘</span>
+      </div>
       <button id="btn-create-room" class="pixel-btn">▶ 建立新房間</button>
     </div>
 

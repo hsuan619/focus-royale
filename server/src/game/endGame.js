@@ -5,6 +5,10 @@ const { calcScore } = require('./scoring')
 
 async function endGame(io, roomId) {
   const room = await prisma.room.findUnique({ where: { id: roomId } })
+  if (!room || room.status === 'ENDED') return
+
+  const { clearDurationTimer } = require('../socket/countdown')
+  clearDurationTimer(roomId)
   const sessions = await prisma.gameSession.findMany({
     where: { roomId },
     include: { user: true },

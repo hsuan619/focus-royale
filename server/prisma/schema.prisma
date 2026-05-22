@@ -20,16 +20,18 @@ model User {
 }
 
 model Room {
-  id         String     @id @default(cuid())
-  mode       RoomMode   @default(NORMAL)
-  stake      Int        @default(0)
-  alpha      Float      @default(0.5)
-  maxPlayers Int        @default(100)
-  status     RoomStatus @default(WAITING)
-  startedAt  DateTime?
-  endedAt    DateTime?
-  createdAt  DateTime   @default(now())
-  sessions   GameSession[]
+  id           String     @id @default(cuid())
+  creatorId    String?
+  mode         RoomMode   @default(NORMAL)
+  stake        Int        @default(0)
+  alpha        Float      @default(0.5)
+  maxPlayers   Int        @default(100)
+  durationMins Int?
+  status       RoomStatus @default(WAITING)
+  startedAt    DateTime?
+  endedAt      DateTime?
+  createdAt    DateTime   @default(now())
+  sessions     GameSession[]
 }
 
 model GameSession {

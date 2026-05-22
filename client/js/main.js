@@ -69,11 +69,11 @@ function connectSocket(token) {
       initLobby(currentUser, joinRoom)
     })
 
-    socket.on('game_start', ({ startAt, playerCount }) => {
+    socket.on('game_start', ({ startAt, playerCount, durationMins }) => {
       clearCountdownUI()
       stopLobbyPoll()
       showScreen('game')
-      initGameScreen(socket, currentRoomId, startAt, playerCount, currentUser?.id)
+      initGameScreen(socket, currentRoomId, startAt, playerCount, currentUser?.id, durationMins)
     })
 
     socket.on('player_reconnecting', ({ userId, seconds }) => {
@@ -103,7 +103,7 @@ function connectSocket(token) {
 }
 
 // ── Join room ──
-function joinRoom(roomId) {
+async function joinRoom(roomId) {
   if (!socket) return
   currentRoomId = roomId
   socket.emit('join_room', { roomId, token: currentToken })
@@ -111,12 +111,23 @@ function joinRoom(roomId) {
   document.getElementById('countdown-number').textContent = '30'
   document.getElementById('countdown-players').textContent = '1 玩家加入'
 
-  document.getElementById('btn-cancel-room').onclick = async () => {
-    await fetch(`/rooms/${roomId}`, { method: 'DELETE', credentials: 'include' })
-    currentRoomId = null
-    clearCountdownUI()
-    showScreen('lobby')
-    initLobby(currentUser, joinRoom)
+  // 只有房主才顯示取消按鈕
+  const cancelBtn = document.getElementById('btn-cancel-room')
+  const roomRes = await fetch(`/rooms/${roomId}`, { credentials: 'include' })
+  if (roomRes.ok) {
+    const room = await roomRes.json()
+    if (room.creatorId === currentUser?.id) {
+      cancelBtn.style.display = 'inline-block'
+      cancelBtn.onclick = async () => {
+        await fetch(`/rooms/${roomId}`, { method: 'DELETE', credentials: 'include' })
+        currentRoomId = null
+        clearCountdownUI()
+        showScreen('lobby')
+        initLobby(currentUser, joinRoom)
+      }
+    } else {
+      cancelBtn.style.display = 'none'
+    }
   }
 }
 

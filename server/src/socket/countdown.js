@@ -2,7 +2,8 @@ const prisma = require('../db/prisma')
 const redis = require('../db/redis')
 const { setRoomState } = require('../db/roomState')
 
-const countdowns = new Map() // roomId → timeoutRef
+const countdowns = new Map()    // roomId → countdown timeoutRef
+const durationTimers = new Map() // roomId → pomodoro end timeoutRef
 
 async function startCountdown(io, roomId) {
   if (countdowns.has(roomId)) return
@@ -32,6 +33,8 @@ async function cancelCountdown(io, roomId) {
 async function startGame(io, roomId) {
   const now = new Date()
   const players = await redis.smembers(`room:${roomId}:players`)
+  const room = await prisma.room.findUnique({ where: { id: roomId } })
+
   await setRoomState(roomId, { status: 'ACTIVE', startAt: now.toISOString(), totalPlayers: players.length })
   await prisma.room.update({ where: { id: roomId }, data: { status: 'ACTIVE', startedAt: now } })
   await prisma.gameSession.createMany({
@@ -39,7 +42,26 @@ async function startGame(io, roomId) {
     skipDuplicates: true,
   })
 
-  io.to(roomId).emit('game_start', { startAt: now.toISOString(), playerCount: players.length })
+  io.to(roomId).emit('game_start', {
+    startAt: now.toISOString(),
+    playerCount: players.length,
+    durationMins: room.durationMins ?? null,
+  })
+
+  if (room.durationMins) {
+    const { endGame } = require('../game/endGame')
+    const ref = setTimeout(async () => {
+      durationTimers.delete(roomId)
+      const current = await prisma.room.findUnique({ where: { id: roomId } })
+      if (current?.status === 'ACTIVE') await endGame(io, roomId)
+    }, room.durationMins * 60 * 1000)
+    durationTimers.set(roomId, ref)
+  }
 }
 
-module.exports = { startCountdown, cancelCountdown }
+function clearDurationTimer(roomId) {
+  const ref = durationTimers.get(roomId)
+  if (ref) { clearTimeout(ref); durationTimers.delete(roomId) }
+}
+
+module.exports = { startCountdown, cancelCountdown, clearDurationTimer }

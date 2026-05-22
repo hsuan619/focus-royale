@@ -10,7 +10,7 @@ let currentRoomId = null
 let currentSocket = null
 let selfEliminated = false
 
-export function initGameScreen(socket, roomId, startAt, playerCount, userId) {
+export function initGameScreen(socket, roomId, startAt, playerCount, userId, durationMins = null) {
   currentSocket = socket
   currentRoomId = roomId
   selfEliminated = false
@@ -22,7 +22,8 @@ export function initGameScreen(socket, roomId, startAt, playerCount, userId) {
 
   // Timer
   clearInterval(timerInterval)
-  timerInterval = setInterval(updateTimer, 500)
+  const endTime = durationMins ? new Date(startTime.getTime() + durationMins * 60 * 1000) : null
+  timerInterval = setInterval(() => updateTimer(endTime), 500)
 
   // Wake lock
   requestWakeLock()
@@ -91,12 +92,20 @@ export function stopGame() {
   stopAmbient()
 }
 
-function updateTimer() {
+function updateTimer(endTime) {
   if (!startTime) return
-  const elapsed = Math.floor((Date.now() - startTime) / 1000)
-  const m = String(Math.floor(elapsed / 60)).padStart(2, '0')
-  const s = String(elapsed % 60).padStart(2, '0')
-  document.getElementById('game-timer').textContent = `${m}:${s}`
+  const el = document.getElementById('game-timer')
+  if (endTime) {
+    const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000))
+    const m = String(Math.floor(remaining / 60)).padStart(2, '0')
+    const s = String(remaining % 60).padStart(2, '0')
+    el.textContent = `${m}:${s}`
+  } else {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000)
+    const m = String(Math.floor(elapsed / 60)).padStart(2, '0')
+    const s = String(elapsed % 60).padStart(2, '0')
+    el.textContent = `${m}:${s}`
+  }
 }
 
 function sendElimination(roomId) {

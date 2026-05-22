@@ -302,11 +302,23 @@ body::after {
 }
 
 /* Mode selector */
-.mode-selector {
+.mode-selector, .duration-selector {
   display: flex;
+  align-items: center;
   gap: 8px;
   padding: 0 16px 16px;
 }
+.dur-btn {
+  padding: 8px 10px;
+  background: var(--black);
+  color: var(--text);
+  border: 2px solid var(--gray);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+.dur-btn.active { border-color: var(--green); color: var(--green); }
 .mode-btn {
   flex: 1;
   padding: 8px 4px;
