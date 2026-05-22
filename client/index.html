@@ -65,6 +65,11 @@
                style="display:none;width:48px;font-size:14px;background:#111;color:var(--green);border:1px solid var(--green);text-align:center;padding:2px">
         <span id="pomodoro-label" style="display:none;font-size:11px;color:var(--gray)">分鐘</span>
       </div>
+      <div id="youtube-input-wrap" style="display:flex;align-items:center;gap:8px;padding:0 16px 8px">
+        <span style="font-size:11px;color:var(--gray);flex-shrink:0">🎵</span>
+        <input id="youtube-url" type="url" placeholder="貼入 YouTube 連結（選填）"
+               style="flex:1;font-size:11px;background:#111;color:var(--green);border:1px solid var(--gray);padding:6px 8px;font-family:'Press Start 2P',monospace;min-width:0">
+      </div>
       <button id="btn-create-room" class="pixel-btn">▶ 建立新房間</button>
     </div>
 
@@ -99,7 +104,9 @@
       <button class="audio-btn" data-sound="mute" title="靜音">🔇</button>
       <button class="audio-btn" data-sound="rain" title="雨聲">🌧</button>
       <button class="audio-btn" data-sound="fire" title="營火">🔥</button>
+      <button class="audio-btn" data-sound="youtube" id="btn-yt-sound" title="YouTube" style="display:none">🎵</button>
     </div>
+    <div id="yt-player-wrap" style="display:none;position:fixed;bottom:56px;right:12px;width:64px;height:36px;z-index:600"></div>
 
     <p class="game-label">FOCUS MODE</p>
     <p id="game-timer" class="glow-green">00:00</p>

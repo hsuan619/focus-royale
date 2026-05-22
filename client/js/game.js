@@ -12,8 +12,49 @@ let detector = null
 let currentRoomId = null
 let currentSocket = null
 let selfEliminated = false
+let ytPlayer = null
+let ytApiReady = false
 
-export function initGameScreen(socket, roomId, startAt, playerCount, userId, durationMins = null) {
+function loadYouTubeAPI() {
+  return new Promise(resolve => {
+    if (ytApiReady) { resolve(); return }
+    if (window.YT?.Player) { ytApiReady = true; resolve(); return }
+    const tag = document.createElement('script')
+    tag.src = 'https://www.youtube.com/iframe_api'
+    document.head.appendChild(tag)
+    window.onYouTubeIframeAPIReady = () => { ytApiReady = true; resolve() }
+  })
+}
+
+function extractYouTubeId(url) {
+  const m = url.match(/(?:youtu\.be\/|[?&]v=|\/embed\/)([A-Za-z0-9_-]{11})/)
+  return m?.[1] ?? null
+}
+
+async function startYouTubePlayer(url) {
+  const videoId = extractYouTubeId(url)
+  if (!videoId) return
+  await loadYouTubeAPI()
+  const wrap = document.getElementById('yt-player-wrap')
+  wrap.innerHTML = '<div id="yt-iframe"></div>'
+  wrap.style.display = 'block'
+  ytPlayer = new window.YT.Player('yt-iframe', {
+    width: 64, height: 36, videoId,
+    playerVars: { autoplay: 1, controls: 0, rel: 0, modestbranding: 1, playsinline: 1 },
+    events: { onReady: e => e.target.playVideo() },
+  })
+}
+
+function stopYouTubePlayer() {
+  if (ytPlayer) {
+    try { ytPlayer.stopVideo() } catch {}
+    ytPlayer = null
+  }
+  const wrap = document.getElementById('yt-player-wrap')
+  if (wrap) { wrap.style.display = 'none'; wrap.innerHTML = '' }
+}
+
+export function initGameScreen(socket, roomId, startAt, playerCount, userId, durationMins = null, youtubeUrl = null) {
   currentSocket = socket
   currentRoomId = roomId
   selfEliminated = false
@@ -37,7 +78,11 @@ export function initGameScreen(socket, roomId, startAt, playerCount, userId, dur
   // Wake lock
   requestWakeLock()
 
-  // Audio: start with rain
+  // Audio switcher
+  const ytBtn = document.getElementById('btn-yt-sound')
+  ytBtn.style.display = youtubeUrl ? 'flex' : 'none'
+  stopYouTubePlayer()
+
   document.querySelectorAll('.audio-btn').forEach(btn => {
     btn.classList.remove('active')
     if (btn.dataset.sound === 'mute') btn.classList.add('active')
@@ -46,8 +91,14 @@ export function initGameScreen(socket, roomId, startAt, playerCount, userId, dur
     btn.onclick = () => {
       document.querySelectorAll('.audio-btn').forEach(b => b.classList.remove('active'))
       btn.classList.add('active')
-      if (btn.dataset.sound === 'mute') stopAmbient()
-      else playAmbient(btn.dataset.sound)
+      if (btn.dataset.sound === 'youtube') {
+        stopAmbient()
+        startYouTubePlayer(youtubeUrl)
+      } else {
+        stopYouTubePlayer()
+        if (btn.dataset.sound === 'mute') stopAmbient()
+        else playAmbient(btn.dataset.sound)
+      }
     }
   })
 
@@ -116,6 +167,7 @@ export function stopGame() {
   if (detector) { detector.stop(); detector = null }
   releaseWakeLock()
   stopAmbient()
+  stopYouTubePlayer()
 }
 
 function updateTimer(endTime) {

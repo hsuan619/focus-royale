@@ -27,6 +27,7 @@ model Room {
   alpha        Float      @default(0.5)
   maxPlayers   Int        @default(10)
   durationMins Int?
+  youtubeUrl   String?
   status       RoomStatus @default(WAITING)
   startedAt    DateTime?
   endedAt      DateTime?

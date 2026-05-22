@@ -49,6 +49,7 @@ async function startGame(io, roomId) {
     startAt: now.toISOString(),
     playerCount: players.length,
     durationMins: room.durationMins ?? null,
+    youtubeUrl: room.youtubeUrl ?? null,
     players: playerList,
   })
 

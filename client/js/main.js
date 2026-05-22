@@ -74,12 +74,12 @@ function connectSocket(token) {
       initLobby(currentUser, joinRoom)
     })
 
-    socket.on('game_start', ({ startAt, playerCount, durationMins, players }) => {
+    socket.on('game_start', ({ startAt, playerCount, durationMins, youtubeUrl, players }) => {
       clearCountdownUI()
       stopLobbyPoll()
       gameActive = true
       showScreen('game')
-      initGameScreen(socket, currentRoomId, startAt, playerCount, currentUser?.id, durationMins)
+      initGameScreen(socket, currentRoomId, startAt, playerCount, currentUser?.id, durationMins, youtubeUrl)
       if (players) {
         initPlayerList(players, currentUser?.id)
       }

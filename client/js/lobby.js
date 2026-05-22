@@ -61,6 +61,7 @@ export function initLobby(user, onJoinRoom) {
   // Duration selector
   const minsInput = document.getElementById('pomodoro-mins')
   const minsLabel = document.getElementById('pomodoro-label')
+  const ytInputWrap = document.getElementById('youtube-input-wrap')
   document.querySelectorAll('.dur-btn').forEach(btn => {
     btn.onclick = () => {
       document.querySelectorAll('.dur-btn').forEach(b => b.classList.remove('active'))
@@ -69,10 +70,12 @@ export function initLobby(user, onJoinRoom) {
         selectedDuration = parseInt(minsInput.value) || 25
         minsInput.style.display = 'inline-block'
         minsLabel.style.display = 'inline'
+        ytInputWrap.style.display = 'none'
       } else {
         selectedDuration = null
         minsInput.style.display = 'none'
         minsLabel.style.display = 'none'
+        ytInputWrap.style.display = 'flex'
       }
     }
   })
@@ -82,10 +85,11 @@ export function initLobby(user, onJoinRoom) {
 
   // Create room
   document.getElementById('btn-create-room').onclick = async () => {
+    const youtubeUrl = document.getElementById('youtube-url').value.trim() || null
     const res = await fetch('/rooms', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mode: selectedMode, stake: STAKE[selectedMode], durationMins: selectedDuration }),
+      body: JSON.stringify({ mode: selectedMode, stake: STAKE[selectedMode], durationMins: selectedDuration, youtubeUrl }),
       credentials: 'include',
     })
     if (!res.ok) return

@@ -5,14 +5,16 @@ const alphaMap = { NORMAL: 0.5, ADVANCED: 1.0, TOURNAMENT: 1.5 }
 
 async function roomsRoutes(fastify) {
   fastify.post('/', { onRequest: [fastify.authenticate] }, async (request, reply) => {
-    const { mode = 'NORMAL', stake = 0, durationMins = null } = request.body ?? {}
+    const { mode = 'NORMAL', stake = 0, durationMins = null, youtubeUrl = null } = request.body ?? {}
     if (!alphaMap[mode]) return reply.code(400).send({ error: 'Invalid mode' })
     if (durationMins !== null && (!Number.isInteger(durationMins) || durationMins < 1 || durationMins > 180)) {
       return reply.code(400).send({ error: 'durationMins must be 1–180' })
     }
+    // youtubeUrl 只在無限制房間允許
+    const safeYoutubeUrl = (!durationMins && youtubeUrl) ? youtubeUrl : null
 
     const room = await prisma.room.create({
-      data: { creatorId: request.user.id, mode, stake, alpha: alphaMap[mode], durationMins },
+      data: { creatorId: request.user.id, mode, stake, alpha: alphaMap[mode], durationMins, youtubeUrl: safeYoutubeUrl },
     })
     await setRoomState(room.id, { status: 'WAITING', alpha: alphaMap[mode], stake })
     await addPlayer(room.id, request.user.id, request.user.name || '')
