@@ -13,6 +13,42 @@ export function initLobby(user, onJoinRoom) {
   document.getElementById('user-name').textContent = user.name?.toUpperCase() || 'PLAYER'
   document.getElementById('user-coins').textContent = `🪙 ${user.coins ?? '---'}  ⭐ ${user.totalScore ?? 0}`
 
+  // Edit name
+  const editBtn = document.getElementById('btn-edit-name')
+  const editForm = document.getElementById('edit-name-form')
+  const nameInput = document.getElementById('name-input')
+  const saveBtn = document.getElementById('btn-save-name')
+  const cancelBtn = document.getElementById('btn-cancel-name')
+
+  editBtn.onclick = () => {
+    nameInput.value = user.name || ''
+    editForm.style.display = 'flex'
+    editBtn.style.display = 'none'
+    nameInput.focus()
+  }
+  cancelBtn.onclick = () => {
+    editForm.style.display = 'none'
+    editBtn.style.display = 'inline-block'
+  }
+  saveBtn.onclick = async () => {
+    const newName = nameInput.value.trim()
+    if (!newName) return
+    const res = await fetch('/auth/profile', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: newName }),
+      credentials: 'include',
+    })
+    if (res.ok) {
+      const { name } = await res.json()
+      user.name = name
+      document.getElementById('user-name').textContent = name.toUpperCase()
+    }
+    editForm.style.display = 'none'
+    editBtn.style.display = 'inline-block'
+  }
+  nameInput.onkeydown = (e) => { if (e.key === 'Enter') saveBtn.onclick() }
+
   // Mode selector
   document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.onclick = () => {

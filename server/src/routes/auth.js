@@ -1,5 +1,6 @@
 const { OAuth2Client } = require('google-auth-library')
 const { findOrCreateUser, applyDailyBonus } = require('../db/users')
+const prisma = require('../db/prisma')
 
 const REDIRECT_URI = `${process.env.BASE_URL || 'http://localhost:3000'}/auth/google/callback`
 
@@ -49,6 +50,20 @@ async function authRoutes(fastify) {
     const user = await getUserById(request.user.id)
     if (!user) return request.server.httpErrors?.notFound() ?? { error: 'not found' }
     return user
+  })
+
+  // PATCH /auth/profile — 修改暱稱
+  fastify.patch('/profile', { preHandler: fastify.authenticate }, async (request, reply) => {
+    const { name } = request.body ?? {}
+    if (!name || typeof name !== 'string' || name.trim().length === 0) {
+      return reply.code(400).send({ error: '暱稱不能為空' })
+    }
+    const trimmed = name.trim().slice(0, 20)
+    const user = await prisma.user.update({
+      where: { id: request.user.id },
+      data: { name: trimmed },
+    })
+    return reply.send({ name: user.name })
   })
 
   // GET /auth/token — 取得 JWT token 供 Socket.io 使用
