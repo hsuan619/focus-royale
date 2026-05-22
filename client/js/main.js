@@ -106,7 +106,7 @@ function joinRoom(roomId) {
   currentRoomId = roomId
   socket.emit('join_room', { roomId, token: currentToken })
   showScreen('countdown')
-  document.getElementById('countdown-number').textContent = '60'
+  document.getElementById('countdown-number').textContent = '30'
   document.getElementById('countdown-players').textContent = '1 玩家加入'
 
   document.getElementById('btn-cancel-room').onclick = async () => {

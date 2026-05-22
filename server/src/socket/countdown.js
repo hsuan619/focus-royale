@@ -9,12 +9,12 @@ async function startCountdown(io, roomId) {
 
   await setRoomState(roomId, { status: 'COUNTDOWN' })
   await prisma.room.update({ where: { id: roomId }, data: { status: 'COUNTDOWN' } })
-  io.to(roomId).emit('countdown_start', { seconds: 60 })
+  io.to(roomId).emit('countdown_start', { seconds: 30 })
 
   const ref = setTimeout(async () => {
     countdowns.delete(roomId)
     await startGame(io, roomId)
-  }, 60_000)
+  }, 30_000)
   countdowns.set(roomId, ref)
 }
 

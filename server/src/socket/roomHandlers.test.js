@@ -79,7 +79,7 @@ describe('join_room', () => {
     c2.emit('join_room', { roomId: room.id, token: makeToken(u2.id) })
     const countdown = await countdownPromise
 
-    expect(countdown.seconds).toBe(60)
+    expect(countdown.seconds).toBe(30)
     c1.disconnect()
     c2.disconnect()
   })
