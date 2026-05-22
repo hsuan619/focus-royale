@@ -57,13 +57,14 @@ export function initGameScreen(socket, roomId, startAt, playerCount, userId, dur
       banner.classList.add('active')
       document.getElementById('warning-secs').textContent = secs
       let remaining = secs
-      const t = setInterval(() => {
+      this._warningTick = setInterval(() => {
         remaining--
         document.getElementById('warning-secs').textContent = remaining
-        if (remaining <= 0) clearInterval(t)
+        if (remaining <= 0) clearInterval(this._warningTick)
       }, 1000)
     },
     onWarningCancelled: () => {
+      clearInterval(this._warningTick)
       const banner = document.getElementById('warning-banner')
       banner.classList.add('hidden')
       banner.classList.remove('active')

@@ -36,8 +36,8 @@ class EliminationDetector {
     if (this.eliminated) return
     this.blurTimer = setTimeout(() => {
       if (document.visibilityState === 'visible') this._eliminate()
-    }, 5000)
-    this.onWarning(5)
+    }, 30000)
+    this.onWarning(30)
   }
 
   _onFocus() {
