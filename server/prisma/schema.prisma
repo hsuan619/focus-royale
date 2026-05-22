@@ -1,0 +1,62 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id          String   @id @default(cuid())
+  googleId    String   @unique
+  email       String   @unique
+  name        String
+  avatarUrl   String?
+  coins       Int      @default(100)
+  totalScore  Int      @default(0)
+  createdAt   DateTime @default(now())
+  lastLoginAt DateTime @default(now())
+  sessions    GameSession[]
+}
+
+model Room {
+  id         String     @id @default(cuid())
+  mode       RoomMode   @default(NORMAL)
+  stake      Int        @default(0)
+  alpha      Float      @default(0.5)
+  maxPlayers Int        @default(100)
+  status     RoomStatus @default(WAITING)
+  startedAt  DateTime?
+  endedAt    DateTime?
+  createdAt  DateTime   @default(now())
+  sessions   GameSession[]
+}
+
+model GameSession {
+  id           String    @id @default(cuid())
+  userId       String
+  roomId       String
+  joinedAt     DateTime  @default(now())
+  eliminatedAt DateTime?
+  survivalSecs Int       @default(0)
+  scoreEarned  Int       @default(0)
+  coinsChange  Int       @default(0)
+  user         User      @relation(fields: [userId], references: [id])
+  room         Room      @relation(fields: [roomId], references: [id])
+
+  @@unique([userId, roomId])
+}
+
+enum RoomMode {
+  NORMAL
+  ADVANCED
+  TOURNAMENT
+}
+
+enum RoomStatus {
+  WAITING
+  COUNTDOWN
+  ACTIVE
+  ENDED
+}

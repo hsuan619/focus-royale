@@ -1,4 +1,5 @@
 const { OAuth2Client } = require('google-auth-library')
+const { findOrCreateUser, applyDailyBonus } = require('../db/users')
 
 const REDIRECT_URI = `${process.env.BASE_URL || 'http://localhost:3000'}/auth/google/callback`
 
@@ -30,11 +31,11 @@ async function authRoutes(fastify) {
     })
     const { sub: googleId, email, name, picture } = ticket.getPayload()
 
-    // 暫時回傳用戶資料（Flow 02 完成後接入 DB）
-    const user = { googleId, email, name, avatarUrl: picture }
+    const user = await findOrCreateUser({ googleId, email, name, avatarUrl: picture })
+    await applyDailyBonus(user.id)
 
     const token = fastify.jwt.sign(
-      { googleId, email, name, avatarUrl: picture },
+      { userId: user.id, googleId, email, name, avatarUrl: picture },
       { expiresIn: '7d' }
     )
     reply

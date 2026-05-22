@@ -1,6 +1,6 @@
 # Flow 01 — 專案初始化 & Google OAuth
 
-**狀態**：🔄 進行中
+**狀態**：✅ 完成
 **前置依賴**：無
 **目標**：建立可運行的 Fastify 服務器，完成 Google OAuth 登入流程，發放 JWT session。
 
@@ -55,10 +55,7 @@
 
 ## 6. 提交
 
-- [ ] `git add` 並 commit
-  ```
-  feat(auth): setup Fastify server with Google OAuth and JWT session
-  ```
+- [x] `git init` + commit `feat(auth): setup Fastify server with Google OAuth and JWT session`
 
 ---
 

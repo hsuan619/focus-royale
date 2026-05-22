@@ -15,7 +15,7 @@ Flow 01: 專案初始化 & 認證
 
 | 流程 | 說明 | 狀態 | 檔案 |
 |------|------|------|------|
-| 01 | 專案初始化 & Google OAuth | ⬜ 未開始 | [todo.md](./01-setup-auth/todo.md) |
+| 01 | 專案初始化 & Google OAuth | ✅ 完成 | [todo.md](./01-setup-auth/todo.md) |
 | 02 | 資料庫 & 資料模型 | ⬜ 未開始 | [todo.md](./02-database-models/todo.md) |
 | 03 | 房間系統 | ⬜ 未開始 | [todo.md](./03-room-system/todo.md) |
 | 04 | 遊戲引擎 | ⬜ 未開始 | [todo.md](./04-game-engine/todo.md) |
