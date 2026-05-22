@@ -2,6 +2,9 @@ const prisma = require('../db/prisma')
 const redis = require('../db/redis')
 const { getRoomState, addPlayer, removePlayer, getPlayerCount } = require('../db/roomState')
 const { startCountdown, cancelCountdown } = require('./countdown')
+const { eliminatePlayer } = require('../game/eliminate')
+
+const disconnectTimers = new Map() // userId → timeoutRef
 
 function registerRoomHandlers(io, socket, fastify) {
   socket.on('join_room', async ({ roomId, token }) => {
@@ -58,6 +61,29 @@ function registerRoomHandlers(io, socket, fastify) {
     }
   })
 
+  socket.on('reconnect_room', async ({ roomId, token }) => {
+    let userId
+    try {
+      const decoded = fastify.jwt.verify(token)
+      userId = decoded.id
+    } catch {
+      socket.emit('error', { message: 'Invalid token' })
+      return
+    }
+
+    const ref = disconnectTimers.get(userId)
+    if (ref) {
+      clearTimeout(ref)
+      disconnectTimers.delete(userId)
+    }
+
+    socket.data.userId = userId
+    socket.data.roomId = roomId
+    socket.join(roomId)
+
+    io.to(roomId).emit('player_reconnected', { userId })
+  })
+
   socket.on('disconnect', async () => {
     const { userId, roomId } = socket.data
     if (!userId || !roomId) return
@@ -73,8 +99,18 @@ function registerRoomHandlers(io, socket, fastify) {
       if (state.status === 'COUNTDOWN' && remaining < 2) {
         await cancelCountdown(io, roomId)
       }
+      return
+    }
+
+    if (state.status === 'ACTIVE') {
+      io.to(roomId).emit('player_reconnecting', { userId, seconds: 10 })
+      const ref = setTimeout(async () => {
+        disconnectTimers.delete(userId)
+        await eliminatePlayer(io, userId, roomId, 'DISCONNECT_TIMEOUT')
+      }, 10_000)
+      disconnectTimers.set(userId, ref)
     }
   })
 }
 
-module.exports = { registerRoomHandlers }
+module.exports = { registerRoomHandlers, disconnectTimers }

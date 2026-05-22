@@ -31,10 +31,9 @@ async function cancelCountdown(io, roomId) {
 
 async function startGame(io, roomId) {
   const now = new Date()
-  await setRoomState(roomId, { status: 'ACTIVE', startAt: now.toISOString() })
-  await prisma.room.update({ where: { id: roomId }, data: { status: 'ACTIVE', startedAt: now } })
-
   const players = await redis.smembers(`room:${roomId}:players`)
+  await setRoomState(roomId, { status: 'ACTIVE', startAt: now.toISOString(), totalPlayers: players.length })
+  await prisma.room.update({ where: { id: roomId }, data: { status: 'ACTIVE', startedAt: now } })
   await prisma.gameSession.createMany({
     data: players.map((userId) => ({ userId, roomId })),
     skipDuplicates: true,

@@ -18,6 +18,7 @@ fastify.decorate('authenticate', authenticate)
 
 fastify.register(require('./routes/auth'), { prefix: '/auth' })
 fastify.register(require('./routes/rooms'), { prefix: '/rooms' })
+fastify.register(require('./routes/game'), { prefix: '/api' })
 
 fastify.get('/health', async () => ({ status: 'ok' }))
 
