@@ -14,15 +14,15 @@ export function initLobby(user, onJoinRoom) {
 
   // Mode selector
   document.querySelectorAll('.mode-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.onclick = () => {
       document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'))
       btn.classList.add('active')
       selectedMode = btn.dataset.mode
-    })
+    }
   })
 
   // Create room
-  document.getElementById('btn-create-room').addEventListener('click', async () => {
+  document.getElementById('btn-create-room').onclick = async () => {
     const res = await fetch('/rooms', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -32,13 +32,13 @@ export function initLobby(user, onJoinRoom) {
     if (!res.ok) return
     const { roomId } = await res.json()
     onJoinRoom(roomId)
-  })
+  }
 
   // Logout
-  document.getElementById('btn-logout').addEventListener('click', async () => {
+  document.getElementById('btn-logout').onclick = async () => {
     await fetch('/auth/logout', { method: 'POST', credentials: 'include' })
     location.reload()
-  })
+  }
 
   loadRooms(onJoinRoom)
   pollInterval = setInterval(() => loadRooms(onJoinRoom), 5000)
