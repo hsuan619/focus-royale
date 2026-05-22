@@ -1,5 +1,5 @@
 const prisma = require('../db/prisma')
-const { setRoomState, getRoomState, deleteRoomState, getPlayerCount } = require('../db/roomState')
+const { setRoomState, getRoomState, deleteRoomState, getPlayerCount, addPlayer } = require('../db/roomState')
 
 const alphaMap = { NORMAL: 0.5, ADVANCED: 1.0, TOURNAMENT: 1.5 }
 
@@ -14,12 +14,8 @@ async function roomsRoutes(fastify) {
     const room = await prisma.room.create({
       data: { creatorId: request.user.id, mode, stake, alpha: alphaMap[mode], durationMins },
     })
-    await setRoomState(room.id, {
-      status: 'WAITING',
-      playerCount: 0,
-      alpha: alphaMap[mode],
-      stake,
-    })
+    await setRoomState(room.id, { status: 'WAITING', alpha: alphaMap[mode], stake })
+    await addPlayer(room.id, request.user.id, request.user.name || '')
     return reply.code(201).send({ roomId: room.id })
   })
 
