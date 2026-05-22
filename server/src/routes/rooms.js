@@ -35,6 +35,15 @@ async function roomsRoutes(fastify) {
     const state = await getRoomState(room.id)
     return reply.send({ ...room, liveState: state })
   })
+
+  fastify.get('/:id/results', async (request, reply) => {
+    const sessions = await prisma.gameSession.findMany({
+      where: { roomId: request.params.id },
+      include: { user: { select: { name: true, avatarUrl: true } } },
+      orderBy: { scoreEarned: 'desc' },
+    })
+    return reply.send({ results: sessions })
+  })
 }
 
 module.exports = roomsRoutes

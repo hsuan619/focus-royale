@@ -1,5 +1,6 @@
 const prisma = require('../db/prisma')
 const { getRoomState, removePlayer, getPlayerCount } = require('../db/roomState')
+const { endGame } = require('./endGame')
 
 async function eliminatePlayer(io, userId, roomId, reason) {
   const state = await getRoomState(roomId)
@@ -23,6 +24,10 @@ async function eliminatePlayer(io, userId, roomId, reason) {
   const totalCount = parseInt(state.totalPlayers) || 0
 
   io.to(roomId).emit('player_eliminated', { userId, survivorCount, totalCount, reason })
+
+  if (survivorCount <= 1) {
+    await endGame(io, roomId)
+  }
 }
 
 module.exports = { eliminatePlayer }
