@@ -60,9 +60,11 @@ function connectSocket(token) {
       showScreen('lobby')
     })
 
-    socket.on('room_cancelled', () => {
+    socket.on('room_cancelled', async () => {
       currentRoomId = null
       clearCountdownUI()
+      const res = await fetch('/auth/me', { credentials: 'include' })
+      if (res.ok) currentUser = await res.json()
       showScreen('lobby')
       initLobby(currentUser, joinRoom)
     })
@@ -176,8 +178,10 @@ function renderResults(sessions) {
       </div>`
   }).join('')
 
-  document.getElementById('btn-back-lobby').onclick = () => {
+  document.getElementById('btn-back-lobby').onclick = async () => {
     currentRoomId = null
+    const res = await fetch('/auth/me', { credentials: 'include' })
+    if (res.ok) currentUser = await res.json()
     showScreen('lobby')
     initLobby(currentUser, joinRoom)
   }
