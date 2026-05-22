@@ -8,6 +8,7 @@ async function eliminatePlayer(io, userId, roomId, reason) {
 
   const session = await prisma.gameSession.findUnique({
     where: { userId_roomId: { userId, roomId } },
+    include: { user: { select: { name: true } } },
   })
   if (!session || session.eliminatedAt) return
 
@@ -23,7 +24,8 @@ async function eliminatePlayer(io, userId, roomId, reason) {
   const survivorCount = await getPlayerCount(roomId)
   const totalCount = parseInt(state.totalPlayers) || 0
 
-  io.to(roomId).emit('player_eliminated', { userId, survivorCount, totalCount, reason })
+  const playerName = session.user?.name || '某玩家'
+  io.to(roomId).emit('player_eliminated', { userId, survivorCount, totalCount, reason, playerName })
 
   if (survivorCount <= 1) {
     await endGame(io, roomId)

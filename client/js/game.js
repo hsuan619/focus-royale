@@ -2,8 +2,10 @@ import { showScreen } from './screens.js'
 import { requestWakeLock, releaseWakeLock } from './wakeLock.js'
 import { playAmbient, stopAmbient } from './audio.js'
 import EliminationDetector from './eliminationDetector.js'
+import { elimMessage, encourageMessage } from './messages.js'
 
 let timerInterval = null
+let encourageInterval = null
 let startTime = null
 let detector = null
 let currentRoomId = null
@@ -19,6 +21,12 @@ export function initGameScreen(socket, roomId, startAt, playerCount, userId, dur
   document.getElementById('survivor-count').textContent = playerCount
   document.getElementById('elim-overlay').classList.add('hidden')
   document.getElementById('warning-banner').classList.add('hidden')
+
+  // 每 10 分鐘顯示鼓勵訊息（停留 10 秒）
+  clearInterval(encourageInterval)
+  encourageInterval = setInterval(() => {
+    addEliminationFeed(`💬 ${encourageMessage()}`, 10000)
+  }, 10 * 60 * 1000)
 
   // Timer
   clearInterval(timerInterval)
@@ -77,17 +85,18 @@ export function updateSurvivorCount(count) {
   document.getElementById('survivor-count').textContent = count
 }
 
-export function addEliminationFeed(msg) {
+export function addEliminationFeed(msg, duration = 3200) {
   const feed = document.getElementById('elimination-feed')
   const item = document.createElement('div')
   item.className = 'feed-item'
   item.textContent = msg
   feed.appendChild(item)
-  setTimeout(() => item.remove(), 3200)
+  setTimeout(() => item.remove(), duration)
 }
 
 export function stopGame() {
   clearInterval(timerInterval)
+  clearInterval(encourageInterval)
   if (detector) { detector.stop(); detector = null }
   releaseWakeLock()
   stopAmbient()

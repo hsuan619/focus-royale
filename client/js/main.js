@@ -1,6 +1,7 @@
 import { showScreen } from './screens.js'
 import { initLobby, stopLobbyPoll } from './lobby.js'
 import { initGameScreen, updateSurvivorCount, addEliminationFeed, stopGame } from './game.js'
+import { elimMessage } from './messages.js'
 
 let socket = null
 let currentUser = null
@@ -84,9 +85,9 @@ function connectSocket(token) {
       addEliminationFeed(`✓ 玩家重新連線`)
     })
 
-    socket.on('player_eliminated', ({ survivorCount, totalCount, userId }) => {
+    socket.on('player_eliminated', ({ survivorCount, totalCount, userId, playerName }) => {
       updateSurvivorCount(survivorCount)
-      addEliminationFeed(`💀 玩家遭淘汰  ${survivorCount}/${totalCount} 存活`)
+      addEliminationFeed(elimMessage(playerName) + `  [${survivorCount}/${totalCount}]`)
     })
 
     socket.on('game_ended', async ({ results }) => {
